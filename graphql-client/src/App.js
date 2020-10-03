@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import './App.css'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import { useApolloClient, gql, useQuery, useMutation } from '@apollo/client'
 import styled from 'styled-components'
 
 const TodoDiv = styled.div`
@@ -22,9 +22,42 @@ const WrapperDiv = styled.div`
 `
 
 function App() {
+  const client = useApolloClient()
   return (
     <WrapperDiv>
       <Todos />
+      <div>
+        <button
+          onClick={() => {
+            const query = gql`
+              query CacheQueryTodos {
+                todos {
+                  id
+                  title
+                  description
+                }
+              }
+            `
+            const data = client.readQuery({ query })
+            client.writeQuery({
+              query,
+              data: {
+                todos: [
+                  ...data.todos,
+                  {
+                    id: 100,
+                    title: 'om',
+                    description: 'shalom',
+                    __typename: 'Todo'
+                  }
+                ]
+              }
+            })
+          }}
+        >
+          Add arbitrary data only to cache
+        </button>
+      </div>
     </WrapperDiv>
   )
 }
