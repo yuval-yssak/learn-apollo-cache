@@ -51,7 +51,9 @@ function Todos() {
   `
 
   const { loading, error, data } = useQuery(GET_TODOS)
-  const [addTodo] = useMutation(ADD_TODO)
+  const [addTodo] = useMutation(ADD_TODO, {
+    refetchQueries: [{ query: GET_TODOS }]
+  })
   const [newTitle, setNewTitle] = useState()
   const [newDescription, setNewDescription] = useState()
   return (
